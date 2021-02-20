@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  reverseproxy-nw:
+    external: true
+
+services:
+  caddy:
+    image: caddy
+    container_name: caddy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data:/data
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - reverseproxy-nw
+    restart: unless-stopped
