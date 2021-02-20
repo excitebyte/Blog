@@ -29,8 +29,8 @@ services:
     image: outlinewiki/outline
     container_name: outline
     # set this command instead to initialize/upgrade the db
-    # command: yarn sequelize:migrate
-    command: yarn start
+    # command: yarn sequelize:migrate --env=production-ssl-disabled
+    command: yarn start --env=production-ssl-disabled
     depends_on:
       - outline_postgres
       - outline_redis
