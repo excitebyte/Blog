@@ -1,0 +1,46 @@
+version: "3"
+services:
+  outline_redis:
+    image: redis
+    container_name: outline_redis
+    networks:
+      - outline-internal
+
+  outline_postgres:
+    image: postgres
+    container_name: outline_postgres
+    env_file: ./outline_postgres.env
+    networks:
+      - outline-internal
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  outline_minio:
+    image: minio/minio
+    container_name: outline_minio
+    volumes:
+      - ./data:/data
+    env_file: ./outline_minio.env
+    networks:
+      - reverseproxy-nw
+    command: "server /data"
+
+  outline:
+    image: outlinewiki/outline
+    container_name: outline
+    # set this command instead to initialize/upgrade the db
+    # command: yarn sequelize:migrate
+    command: yarn start
+    depends_on:
+      - outline_postgres
+      - outline_redis
+      - outline_minio
+    env_file: ./outline.env
+    networks:
+      - outline-internal
+      - reverseproxy-nw
+
+networks:
+  outline-internal:
+  reverseproxy-nw:
+    external: true
